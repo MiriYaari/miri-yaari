@@ -1,27 +1,37 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 #include <winnt.h>
 #pragma warning(disable:4996)
 
 void main()
 {
-	FILE* f = fopen("C:\\Windows\\System32\\cacls.exe", "rb");//לקריאה בינארית calc.exe פתחתי את
-	PIMAGE_DOS_HEADER dosHeader;
-	int pNTHeader;
+	/*
+	PIMAGE_DOS_HEADER DosHeader;
+	long StartMS_Dos;
+	*/
 	char buf[10];
-
-	if (f == NULL)//בדיקה לאישור פתיחה
+	int a = 0;
+	FILE* f = fopen("C:\\Windows\\System32\\cacls.exe", "rb");//open calc.exe to binary reading
+	if (f == NULL)//chek to open the file
 	{
 		printf("Failed opening the file. Exiting!\n");
 		return;
 	}
-
-	fread(buf, sizeof(buf), 2, f);// קוראת מהקובץ
-	printf("Example %c\r\n", buf[0]);
-	printf("Example %c\r\n", buf[1]);
 	//where the PE header starts
-	dosHeader = f;
-	pNTHeader = dosHeader + dosHeader->e_lfanew;
+	fseek(f, 78, SEEK_SET);
+	fread(buf,sizeof(char), 9, f);
+	//fread(buf, sizeof(buf), 9, f);
+	printf("Example %0x\r\n", buf[0]);
+	printf("Example %0x\r\n", buf[1]);
 
 	fclose(f);
+	/*
+	DosHeader = f;//exept the start address
+	printf("Example %c\r\n", DosHeader);
+
+	StartMS_Dos = DosHeader + 78;
+
+	//fread(buf, sizeof(buf), 10, f);
+	*/
 }
